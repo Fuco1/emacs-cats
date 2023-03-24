@@ -34,28 +34,41 @@
   "The monoid of endomorphisms under composition.")
 
 (defun cats-endo (a)
+  "Construct an endomorphism from A."
   (cats-data-endo :app-endo a))
 
 
 ;;; Monoid generics
 
 ;; (cats-mempty :: (function (&a) &a))
-(cl-defgeneric cats-mempty (class))
+(cl-defgeneric cats-mempty (inst)
+  "Return the identity element of the monoid of INST's class.")
 
 ;; (cats-mappend :: (function (&a &a) &a))
-(cl-defgeneric cats-mappend (a b))
+(cl-defgeneric cats-mappend (a b)
+  "Return the result of appending A and B.")
 
 ;; (cats-mconcat :: (function ((list &a) &a) &a))
 (cl-defgeneric cats-mconcat (lst &optional mempty)
-  (-reduce-r-from #'cats-mappend (cats-mempty mempty) lst))
+  "Return the result of concatenating LST.
+
+MEMPTY is an instance fed to `cats-mempty'."
+  (if (null lst)
+      (cats-mempty mempty)
+    (let ((re (cats-mempty mempty)))
+      (while lst
+        (setq re (cats-mappend re (pop lst))))
+      re)))
 
 
 ;;; Endo
 
 (cl-defmethod cats-mempty ((_ cats-data-endo))
+  "Return the identity endomorphism."
   (cats-endo #'identity))
 
 (cl-defmethod cats-mappend ((a cats-data-endo) (b cats-data-endo))
+  "Return the composition of A and B."
   (cats-endo
    (lambda (x)
      (funcall (oref a app-endo)
@@ -65,25 +78,45 @@
 ;;; List
 
 (cl-defmethod cats-mempty ((_ list))
+  "Return the empty list."
   nil)
 
 (cl-defmethod cats-mappend ((list1 list) (list2 list))
+  "Return the concatenation of LIST1 and LIST2."
   (append list1 list2))
-
-(cl-defmethod cats-mconcat ((lists list) &optional _)
-  (apply #'append lists))
 
 
 ;;; Vector
 
 (cl-defmethod cats-mempty ((_ vector))
+  "Return the empty vector."
   (vector))
 
 (cl-defmethod cats-mappend ((vec1 vector) (vec2 vector))
+  "Return the result of appending VEC1 and VEC2."
   (vconcat vec1 vec2))
 
-(cl-defmethod cats-mconcat ((vecs vector) &optional _)
-  (apply #'vconcat vecs))
+
+;;; Number
+
+(cl-defmethod cats-mempty ((_ number))
+  "Return the zero number."
+  0)
+
+(cl-defmethod cats-mappend ((a number) (b number))
+  "Return the sum of A and B."
+  (+ a b))
+
+
+;;; String
+
+(cl-defmethod cats-mempty ((_ string))
+  "Return the empty string."
+  "")
+
+(cl-defmethod cats-mappend ((str1 string) (str2 string))
+  "Return the concatenation of STR1 and STR2."
+  (concat str1 str2))
 
 (provide 'cats-data-monoid)
 ;;; cats-data-monoid.el ends here

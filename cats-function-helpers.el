@@ -24,6 +24,7 @@
 ;;; Code:
 
 (defun cats-partial (fn &optional n)
+  "Curry the function FN with N arguments."
   (setq n (or n 1))
   (if (= n 1)
       (lambda (x) (funcall fn x))

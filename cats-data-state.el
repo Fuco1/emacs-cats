@@ -33,33 +33,41 @@
   ((run :initarg :run)))
 
 (defun cats-eval-state (m initial-state)
+  "Evaluate the state monad M with INITIAL-STATE and return result."
   (car (funcall (oref m run) initial-state)))
 
 (defun cats-exec-state (m initial-state)
+  "Evaluate the state monad M with INITIAL-STATE and return state."
   (cdr (funcall (oref m run) initial-state)))
 
 (defun cats-run-state (m initial-state)
+  "Evaluate the state monad M with INITIAL-STATE and return both result and state."
   (funcall (oref m run) initial-state))
 
 (defun cats-state-get ()
+  "Get the state."
   (cats-data-state
    :run (lambda (s) (cons s s))))
 
 (defun cats-state-put (value)
+  "Put VALUE into the state."
   (cats-data-state
    :run (lambda (_) (cons nil value))))
 
 (defun cats-state-modify (fn)
+  "Modify the state with FN."
   (cats-data-state
    :run (lambda (state) (cons nil (funcall fn state)))))
 
 (cl-defmethod cats-fmap (fn (m cats-data-state))
+  "Map FN over the result of M."
   (cats-data-state
    :run (lambda (st)
           (pcase-let ((`(,a . ,state) (funcall (oref m run) st)))
             (cons (funcall fn a) state)))))
 
 (cl-defmethod cats-apply ((fn cats-data-state) (m cats-data-state))
+  "Apply FN to M."
   (cats-data-state
    :run (lambda (st)
           (pcase-let* ((`(_ . ,state) (funcall (oref fn run) st))
@@ -67,6 +75,7 @@
             (cons b state2)))))
 
 (cl-defmethod cats-bind ((m cats-data-state) fn)
+  "Bind M with FN."
   (cats-data-state
    :run (lambda (st)
           (pcase-let* ((`(,a . ,state) (funcall (oref m run) st)))

@@ -23,6 +23,8 @@
 
 ;;; Code:
 
+(require 'cats-data-maybe)
+
 
 ;;; Functor class
 
@@ -42,19 +44,30 @@ fmap implementations must obey the following laws:
 ;;; List
 
 (cl-defmethod cats-fmap (fn (a list))
+  "Map FN over A."
   (mapcar fn a))
 
 
 ;;; Cons
 
 (cl-defmethod cats-fmap (fn (a cons))
+  "Map FN over A."
   (cons (funcall fn (car a))
         (funcall fn (cdr a))))
 
 
 ;;; Vector
 (cl-defmethod cats-fmap (fn (a vector))
+  "Map FN over A."
   (vconcat (mapcar fn a)))
+
+
+;;; Maybe
+(cl-defmethod cats-fmap (fn (a cats-data-maybe))
+  "Map FN over A."
+  (if (cats-nothing-p a)
+      (cats-nothing)
+    (cats-just (funcall fn (cats-just-value a)))))
 
 (provide 'cats-data-functor)
 ;;; cats-data-functor.el ends here

@@ -30,7 +30,9 @@
 
 (eval-when-compile (require 'cats-macros))
 
+(require 'cats-data-maybe)
 (require 'cats-data-applicative)
+(require 'cats-data-foldable)
 
 
 ;;; Monad class
@@ -46,10 +48,21 @@ context from the rest."
   (cats-pure return a))
 
 ;; (cats-bind :: (function ((:M &a) (function (&a) (:M &b))) (:M &b)))
-(cl-defgeneric cats-bind (a b))
+(cl-defgeneric cats-bind (a b)
+  "Bind A to B.
+
+A is a monadic value, B is a function that takes the value out of
+the monadic context and returns a new monadic value.
+
+This function is the heart of the monadic world.  It is the
+function that allows us to chain monadic computations together.")
 
 ;; (cats-seq :: (function ((:M &a) (:M &b)) (:M &b)))
 (cl-defgeneric cats-seq (a b)
+  "Bind A to B.
+
+A is a monadic value, B is a monadic value.  This function ignores
+the return value of A and returns B."
   (cats-bind a (lambda (_) b)))
 
 (defclass cats-monad () ())
@@ -58,10 +71,14 @@ context from the rest."
 ;;; List
 
 (cl-defmethod cats-bind ((m list) fn)
+  "Bind M to FN."
   (apply #'append (mapcar fn m)))
 
 (cl-defmethod cats-mapm (fn (lst list) return)
-  (-reduce-r-from
+  "Map FN over LST in monadic context.
+
+RETURN is an instance of the monadic type returned by fn."
+  (cats-foldr
    (lambda (it acc)
      (cats-do
       (:= x (funcall fn it))
@@ -74,17 +91,30 @@ context from the rest."
 ;;; Vector
 
 (cl-defmethod cats-bind ((m vector) fn)
+  "Bind M to FN."
   (apply #'vconcat (mapcar fn m)))
 
-(cl-defmethod cats-mapm (fn (lst vector) return)
-  (-reduce-r-from
+(cl-defmethod cats-mapm (fn (vec vector) return)
+  "Map FN over VEC in monadic context.
+
+RETURN is an instance of the monadic type returned by fn."
+  (cats-foldr
    (lambda (it acc)
      (cats-do
       (:= x (funcall fn it))
       (:= xs acc)
       (cats-return return (vconcat (vector x) xs))))
    (cats-return return nil)
-   (append lst nil)))
+   (append vec nil)))
+
+
+;;; Maybe
+
+(cl-defmethod cats-bind ((m cats-data-maybe) fn)
+  "Bind M to FN."
+  (if (cats-nothing-p m)
+      (cats-nothing)
+    (funcall fn (cats-just-value m))))
 
 (provide 'cats-data-monad)
 ;;; cats-data-monad.el ends here

@@ -23,6 +23,7 @@
 
 ;;; Code:
 
+(require 'cats-data-maybe)
 (require 'cats-data-functor)
 (require 'cats-function-helpers)
 
@@ -54,31 +55,47 @@ Applicative functors must obey the following laws:
   pure id <*> v = v                            -- Identity
   pure f <*> pure x = pure (f x)               -- Homomorphism
   u <*> pure y = pure ($ y) <*> u              -- Interchange
-  pure (.) <*> u <*> v <*> w = u <*> (v <*> w) -- Composition
-")
+  pure (.) <*> u <*> v <*> w = u <*> (v <*> w) -- Composition")
 
 ;; (cats-lift-a2 :: (function ((function (&a &b) &c) (:T &a) (:T &b)) (:T &c)))
 (cl-defgeneric cats-lift-a2 (fn a b)
+  "Lift a binary function FN to actions A and B."
   (cats-apply (cats-fmap (cats-partial fn 2) a) b))
 
 
 ;;; List
 
 (cl-defmethod cats-pure ((_ list) a)
+  "Return A in pure context."
   (list a))
 
 (cl-defmethod cats-apply ((fn list) (a list))
+  "Apply FN to A list."
   (apply #'append (mapcar (lambda (f) (mapcar f a)) fn)))
 
 
 ;;; Vector
 
 (cl-defmethod cats-pure ((_ vector) a)
+  "Return A in pure context."
   (vector a))
 
 (cl-defmethod cats-apply ((fn vector) (a vector))
+  "Apply FN to A vector."
   (apply #'vconcat (mapcar (lambda (f) (mapcar f a)) fn)))
 
+
+;;; Maybe
+(cl-defmethod cats-pure ((_ cats-data-maybe) a)
+  "Return A in pure context."
+  (cats-just a))
+
+(cl-defmethod cats-apply ((fn cats-data-maybe) (a cats-data-maybe))
+  "Apply FN to A vector."
+  (if (and (cats-just-p fn)
+           (cats-just-p a))
+      (cats-just (funcall (cats-just-value fn) (cats-just-value a)))
+    (cats-nothing)))
 
 (provide 'cats-data-applicative)
 ;;; cats-data-applicative.el ends here

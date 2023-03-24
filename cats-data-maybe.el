@@ -26,47 +26,21 @@
 (require 'eieio-base)
 (eval-and-compile (setq eieio-backward-compatibility nil))
 
-(require 'cats-data-monad)
-
 (defclass cats-data-maybe () () :abstract t)
 (defclass cats-data-just (cats-data-maybe) ((value :initarg :value :accessor cats-just-value)))
 (defclass cats-nothing (cats-data-maybe eieio-singleton) ())
 
 (defun cats-just (x)
+  "Wrap X in a `cats-data-just' object."
   (cats-data-just :value x))
 
 (defun cats-maybe (default fn maybe)
+  "Apply FN to the value of MAYBE, or return DEFAULT if MAYBE is `cats-nothing'."
   (if (cats-data-just-p maybe)
       (funcall fn (cats-just-value maybe))
     default))
 
 (defalias 'cats-just-p 'cats-data-just-p)
-
-(cl-defmethod cats-fmap (fn (a cats-data-maybe))
-  (if (cats-nothing-p a)
-      (cats-nothing)
-    (cats-just (funcall fn (cats-just-value a)))))
-
-(cl-defmethod cats-pure ((_ cats-data-maybe) a)
-  (cats-just a))
-
-(cl-defmethod cats-apply ((fn cats-data-maybe) (a cats-data-maybe))
-  (if (and (cats-just-p fn)
-           (cats-just-p a))
-      (cats-just (funcall (cats-just-value fn) (cats-just-value a)))
-    (cats-nothing)))
-
-(cl-defmethod cats-traverse (fn (traversible cats-data-maybe) pure)
-  (if (cats-nothing-p traversible)
-      (cats-pure pure (cats-nothing))
-    (cats-fmap
-     #'cats-just
-     (funcall fn (cats-just-value traversible)))))
-
-(cl-defmethod cats-bind ((m cats-data-maybe) fn)
-  (if (cats-nothing-p m)
-      (cats-nothing)
-    (funcall fn (cats-just-value m))))
 
 (provide 'cats-data-maybe)
 ;;; cats-data-maybe.el ends here
