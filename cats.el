@@ -24,6 +24,8 @@
 
 ;;; Commentary:
 
+;; Category-theoretical structures for Elisp.
+
 ;;; Code:
 
 (require 'eieio-base)
