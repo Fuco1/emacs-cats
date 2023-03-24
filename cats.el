@@ -33,7 +33,7 @@
 
 (require 'cats-data-monad)
 (require 'cats-data-maybe)
-(require 'cats-data-traversible)
+(require 'cats-data-traversable)
 (require 'cats-data-foldable)
 
 (provide 'cats)

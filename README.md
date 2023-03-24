@@ -111,4 +111,4 @@ Instances for types provided by Cats:
 
 - `cats-data-maybe`
 
-## Traversible
+## Traversable

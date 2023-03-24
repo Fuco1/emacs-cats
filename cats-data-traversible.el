@@ -1,4 +1,4 @@
-;;; cats-data-traversible.el --- Traversible -*- lexical-binding: t -*-
+;;; cats-data-traversable.el --- Traversable -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2023 Matúš Goljer
 
@@ -29,48 +29,48 @@
 (require 'cats-data-applicative)
 
 
-;;; Traversible
+;;; Traversable
 
 ;; (cats-traverse :: (function ((function (&a) (:F &b)) (:T &a)) (:F (:T &b))))
-(cl-defgeneric cats-traverse (fn traversible pure)
-  "Traverse a traversible structure with a function.
+(cl-defgeneric cats-traverse (fn traversable pure)
+  "Traverse a traversable structure with a function.
 
 FN is a function that takes a value and maps it to an applicative
 effect.
 
-TRAVERSIBLE is the traversible structure.
+TRAVERSABLE is the traversable structure.
 
 PURE is an instance of an applicative class returned by fn."
-  (cats-sequence-a (cats-fmap fn traversible) pure))
+  (cats-sequence-a (cats-fmap fn traversable) pure))
 
 ;; (cats-sequence-a :: (function ((:T (:F &a))) (:F (:T &a))))
-(cl-defgeneric cats-sequence-a (traversible pure)
-  "Evaluate each action in TRAVERSIBLE from left to right, and collect the results.
+(cl-defgeneric cats-sequence-a (traversable pure)
+  "Evaluate each action in TRAVERSABLE from left to right, and collect the results.
 
-TRAVERSIBLE is the traversible structure.
+TRAVERSABLE is the traversable structure.
 
 PURE is an instance of an applicative class returned by fn."
-  (cats-traverse #'identity traversible pure))
+  (cats-traverse #'identity traversable pure))
 
 ;; (cats-mapm :: (function ((function (&a) (:M &b)) (:T &a)) (:M (:T &b))))
-(cl-defgeneric cats-mapm (fn traversible return)
+(cl-defgeneric cats-mapm (fn traversable return)
   "Same as `cats-traverse' but for monadic actions.
 
 The default implementation of this method is `cats-traverse' but
 it exists because some monads can have more efficient
 implementation due to monads having more structure than
 applicatives."
-  (cats-traverse fn traversible return))
+  (cats-traverse fn traversable return))
 
 ;; (cats-sequence :: (function ((:T (:M &a))) (:M (:T &a))))
-(cl-defgeneric cats-sequence (traversible return)
+(cl-defgeneric cats-sequence (traversable return)
   "Same as `cats-sequence-a' but for monadic actions.
 
 The default implementation of this method is `cats-sequence-a'
 but it exists because some monads can have more efficient
 implementation due to monads having more structure than
 applicatives."
-  (cats-sequence-a traversible return))
+  (cats-sequence-a traversable return))
 
 
 ;;; List
@@ -86,13 +86,13 @@ applicatives."
 
 ;;; Maybe
 
-(cl-defmethod cats-traverse (fn (traversible cats-data-maybe) pure)
+(cl-defmethod cats-traverse (fn (traversable cats-data-maybe) pure)
   "Traverse a maybe with a function."
-  (if (cats-nothing-p traversible)
+  (if (cats-nothing-p traversable)
       (cats-pure pure (cats-nothing))
     (cats-fmap
      #'cats-just
-     (funcall fn (cats-just-value traversible)))))
+     (funcall fn (cats-just-value traversable)))))
 
-(provide 'cats-data-traversible)
-;;; cats-data-traversible.el ends here
+(provide 'cats-data-traversable)
+;;; cats-data-traversable.el ends here
