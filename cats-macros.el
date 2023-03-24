@@ -33,8 +33,8 @@
            (functionp (cadr x)))
       (functionp x)))
 
-(def-edebug-elem-spec 'cats-do-item
-  '(&or (":=" sexp form) ("let" sexp form) form))
+(def-edebug-spec cats-do-item
+  (&or (":=" sexp form) ("let" sexp form) form))
 
 (defmacro cats-do (init &rest actions)
   (declare (debug (cats-do-item &rest cats-do-item)))
