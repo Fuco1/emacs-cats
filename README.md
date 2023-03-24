@@ -3,7 +3,7 @@
 This package implements various abstractions from Category Theory
 highly inspired by Haskell.
 
-The complete documentation can be found on the
+The complete (Haskell) documentation can be found on the
 [hackage](https://hackage.haskell.org/package/base-4.18.0.0).
 
 # Usage
