@@ -75,6 +75,31 @@ Applicative functors must obey the following laws:
   (apply #'append (mapcar (lambda (f) (mapcar f a)) fn)))
 
 
+;;; Cons
+
+(cl-defmethod cats-pure ((_ cons) a)
+  (list a))
+
+(cl-defmethod cats-apply ((fn cons) (a cons))
+  "The apply implementation for cons uses zipping.
+
+For regular lists the list method is called instead."
+  (let ((last-cons-fn (last fn))
+        (last-cons-a (last a))
+        (fn-len (safe-length fn))
+        (a-len (safe-length a)))
+    (if (or (/= fn-len a-len)
+            (and (not (cdr last-cons-fn))
+                 (not (cdr last-cons-a))))
+        (cl-call-next-method)
+      (let* ((start-fn (seq-take fn fn-len))
+             (start-a (seq-take a fn-len))
+             (re (cl-mapcar #'funcall start-fn start-a)))
+        (setf (cdr (last re))
+              (funcall (cdr last-cons-fn) (cdr last-cons-a)))
+        re))))
+
+
 ;;; Ziplist
 
 (defclass cats-data-ziplist ()
