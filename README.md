@@ -60,7 +60,7 @@ expressions (`cats-pure`), and sequence computations and combine their
 results (`cats-apply`).  Unlike Monads, Applicative application can
 not decide what to do next based on the result of previous action.
 
-Each Applicative must also implement Functor.
+Each Applicative must also implement **Functor**.
 
 Minimal implementation of Applicative is:
 
@@ -89,7 +89,7 @@ The Monad class defines the basic operations over a monad, an abstract
 datatype of actions.  Unlike Applicative, Monad binding can decide
 what to do next based on the result of previous action.
 
-Each Monad must also implement Applicative.
+Each Monad must also implement **Applicative**.
 
 Minimal implementation of Monad is:
 
@@ -154,7 +154,6 @@ The following laws must be satisfied:
 = (cats-mappend (cats-mappend a b) c)
 
 ;; Concatenation
-
   (cats-mconcat list-of-a)
 = (cats-foldr #'cats-mappend (cats-mempty item-of-a) list-of-a)
 ```
@@ -194,7 +193,7 @@ Functors representing data structures that can be transformed to
 structures of the same shape by performing an Applicative (or,
 therefore, Monad) action on each element from left to right.
 
-Each Traversable must also implement Functor and Foldable.
+Each Traversable must also implement **Functor** and **Foldable**.
 
 Minimal implementation of Traversable is:
 
