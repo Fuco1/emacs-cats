@@ -70,9 +70,9 @@
   "Apply FN to M."
   (cats-data-state
    :run (lambda (st)
-          (pcase-let* ((`(_ . ,state) (funcall (oref fn run) st))
-                       (`(,b . ,state2) (funcall (oref m run) state)))
-            (cons b state2)))))
+          (pcase-let* ((`(,f . ,state) (funcall (oref fn run) st))
+                       (`(,x . ,state2) (funcall (oref m run) state)))
+            (cons (funcall f x) state2)))))
 
 (cl-defmethod cats-bind ((m cats-data-state) fn)
   "Bind M with FN."
