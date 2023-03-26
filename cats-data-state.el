@@ -66,6 +66,10 @@
           (pcase-let ((`(,a . ,state) (funcall (oref m run) st)))
             (cons (funcall fn a) state)))))
 
+(cl-defmethod cats-pure ((_ cats-data-state) v)
+  (cats-data-state
+   :run (lambda (st) (cons v st))))
+
 (cl-defmethod cats-apply ((fn cats-data-state) (m cats-data-state))
   "Apply FN to M."
   (cats-data-state
