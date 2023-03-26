@@ -30,6 +30,14 @@
 (defclass cats-data-just (cats-data-maybe) ((value :initarg :value :accessor cats-just-value)))
 (defclass cats-nothing (cats-data-maybe eieio-singleton) ())
 
+(cl-defmethod cl-print-object ((this cats-data-just) stream)
+  (princ "#<cats-data-just " stream)
+  (cl-print-object (oref this value) stream)
+  (princ ">" stream))
+
+(cl-defmethod cl-print-object ((_this cats-nothing) stream)
+  (princ "#<cats-nothing>" stream))
+
 (defun cats-just (x)
   "Wrap X in a `cats-data-just' object."
   (cats-data-just :value x))

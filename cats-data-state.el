@@ -32,6 +32,14 @@
 (defclass cats-data-state ()
   ((run :initarg :run)))
 
+(cl-defmethod cl-print-object ((this cats-data-state) stream)
+  (princ "#<cats-data-state " stream)
+  (cl-print-object (if (slot-boundp this 'run)
+                       (oref this run)
+                     nil)
+                   stream)
+  (princ ">" stream))
+
 (defun cats-eval-state (m initial-state)
   "Evaluate the state monad M with INITIAL-STATE and return result."
   (car (funcall (oref m run) initial-state)))
