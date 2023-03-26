@@ -6,7 +6,7 @@
 ;; Maintainer: Matúš Goljer <matus.goljer@gmail.com>
 ;; Version: 0.0.1
 ;; Created: 20th March 2023
-;; Package-requires: ((dash "2.17.0") (emacs "26.1"))
+;; Package-requires: ((emacs "26.1"))
 ;; URL: https://github.com/Fuco1/emacs-cats
 
 ;; This program is free software; you can redistribute it and/or

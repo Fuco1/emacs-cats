@@ -26,8 +26,6 @@
 (require 'eieio)
 (eval-and-compile (setq eieio-backward-compatibility nil))
 
-(require 'dash)
-
 (defclass cats-data-endo ()
   ;; (app-endo :: (function (&a) &a))
   ((app-endo :initarg :app-endo))

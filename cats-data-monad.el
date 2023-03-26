@@ -26,8 +26,6 @@
 (require 'eieio)
 (eval-and-compile (setq eieio-backward-compatibility nil))
 
-(require 'dash)
-
 (eval-when-compile (require 'cats-macros))
 
 (require 'cats-data-maybe)
