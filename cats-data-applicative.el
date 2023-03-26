@@ -74,6 +74,23 @@ Applicative functors must obey the following laws:
   (apply #'append (mapcar (lambda (f) (mapcar f a)) fn)))
 
 
+;;; Ziplist
+
+(defclass cats-data-ziplist ()
+  ((list :initarg :list)))
+
+(defun cats-ziplist (a)
+  (cats-data-ziplist :list a))
+
+(cl-defmethod cats-pure ((_ cats-data-ziplist) a)
+  "Return A in pure context."
+  (cats-ziplist (list a)))
+
+(cl-defmethod cats-apply ((fn cats-data-ziplist) (a cats-data-ziplist))
+  "Apply FN to A list."
+  (cats-ziplist (cl-mapcar #'funcall (oref fn list) (oref a list))))
+
+
 ;;; Vector
 
 (cl-defmethod cats-pure ((_ vector) a)
