@@ -42,7 +42,8 @@ Examples:
 
   (cats-pure [] 1)             ;; => [1]
   (cats-pure nil 1)            ;; => (1)
-  (cats-pure (cats-nothing) 1) ;; => (cats-just 1)")
+  (cats-pure (cats-nothing) 1) ;; => (cats-just 1)"
+  (declare (indent 1)))
 
 ;; (cats-apply :: (function ((:F (function (&a) &b)) (:F &a)) (:F &b)))
 (cl-defgeneric cats-apply (a b)

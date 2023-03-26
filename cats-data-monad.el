@@ -45,6 +45,7 @@ This function is a useless wrapper simply calling RETURN on A
 
 Its purpose is to help reading the code and delimit the monadic
 context from the rest."
+  (declare (indent 1))
   (cats-pure return a))
 
 ;; (cats-bind :: (function ((:M &a) (function (&a) (:M &b))) (:M &b)))
@@ -55,7 +56,8 @@ A is a monadic value, B is a function that takes the value out of
 the monadic context and returns a new monadic value.
 
 This function is the heart of the monadic world.  It is the
-function that allows us to chain monadic computations together.")
+function that allows us to chain monadic computations together."
+  (declare (indent 1)))
 
 ;; (cats-seq :: (function ((:M &a) (:M &b)) (:M &b)))
 (cl-defgeneric cats-seq (a b)
