@@ -52,8 +52,14 @@ fmap implementations must obey the following laws:
 
 (cl-defmethod cats-fmap (fn (a cons))
   "Map FN over A."
-  (cons (funcall fn (car a))
-        (funcall fn (cdr a))))
+  (let ((last-cons (last a)))
+    (if (not (cdr last-cons))
+        (mapcar fn a)
+      (let* ((l (safe-length a))
+             (start (mapcar fn (seq-take a l))))
+        (setf (cdr (last start))
+              (funcall fn (cdr last-cons)))
+        start))))
 
 
 ;;; Vector
