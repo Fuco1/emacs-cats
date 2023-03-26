@@ -32,7 +32,7 @@
 ;;; Traversable
 
 ;; (cats-traverse :: (function ((function (&a) (:F &b)) (:T &a)) (:F (:T &b))))
-(cl-defgeneric cats-traverse (fn traversable pure)
+(cl-defgeneric cats-traverse (fn traversable &optional pure)
   "Traverse a traversable structure with a function.
 
 FN is a function that takes a value and maps it to an applicative
@@ -40,20 +40,24 @@ effect.
 
 TRAVERSABLE is the traversable structure.
 
-PURE is an instance of an applicative class returned by fn."
+PURE is an instance of an applicative class returned by fn.  It
+is optional because it is not necessary for non-empty
+traversibles."
   (cats-sequence-a (cats-fmap fn traversable) pure))
 
 ;; (cats-sequence-a :: (function ((:T (:F &a))) (:F (:T &a))))
-(cl-defgeneric cats-sequence-a (traversable pure)
+(cl-defgeneric cats-sequence-a (traversable &optional pure)
   "Evaluate each action in TRAVERSABLE from left to right, and collect the results.
 
 TRAVERSABLE is the traversable structure.
 
-PURE is an instance of an applicative class returned by fn."
+PURE is an instance of an applicative class returned by fn.  It
+is optional because it is not necessary for non-empty
+traversibles."
   (cats-traverse #'identity traversable pure))
 
 ;; (cats-mapm :: (function ((function (&a) (:M &b)) (:T &a)) (:M (:T &b))))
-(cl-defgeneric cats-mapm (fn traversable return)
+(cl-defgeneric cats-mapm (fn traversable &optional return)
   "Same as `cats-traverse' but for monadic actions.
 
 The default implementation of this method is `cats-traverse' but
@@ -63,7 +67,7 @@ applicatives."
   (cats-traverse fn traversable return))
 
 ;; (cats-sequence :: (function ((:T (:M &a))) (:M (:T &a))))
-(cl-defgeneric cats-sequence (traversable return)
+(cl-defgeneric cats-sequence (traversable &optional return)
   "Same as `cats-sequence-a' but for monadic actions.
 
 The default implementation of this method is `cats-sequence-a'
@@ -75,7 +79,7 @@ applicatives."
 
 ;;; List
 
-(cl-defmethod cats-traverse (fn (lst list) pure)
+(cl-defmethod cats-traverse (fn (lst list) &optional pure)
   "Traverse a list with a function."
   (cats-foldr
    (lambda (it acc)
@@ -86,7 +90,7 @@ applicatives."
 
 ;;; Maybe
 
-(cl-defmethod cats-traverse (fn (traversable cats-data-maybe) pure)
+(cl-defmethod cats-traverse (fn (traversable cats-data-maybe) &optional pure)
   "Traverse a maybe with a function."
   (if (cats-nothing-p traversable)
       (cats-pure pure (cats-nothing))
