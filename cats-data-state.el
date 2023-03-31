@@ -33,6 +33,7 @@
   ((run :initarg :run)))
 
 (cl-defmethod cl-print-object ((this cats-data-state) stream)
+  "Print the object THIS to STREAM."
   (princ "#<cats-data-state " stream)
   (cl-print-object (if (slot-boundp this 'run)
                        (oref this run)
@@ -75,6 +76,7 @@
             (cons (funcall fn a) state)))))
 
 (cl-defmethod cats-pure ((_ cats-data-state) v)
+  "Return a state monad with value V."
   (cats-data-state
    :run (lambda (st) (cons v st))))
 

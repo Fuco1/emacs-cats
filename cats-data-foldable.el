@@ -101,7 +101,10 @@ If a value is found, it is returned as `cats-just', otherwise
 ;;; List
 
 (cl-defmethod cats-foldr (fn init (foldable list))
-  "Right-associative fold of a structure."
+  "Right-associative fold of a structure.
+
+FN is the folding function, INIT is the initial value, and
+FOLDABLE is the structure to fold."
   (let* ((acc init)
          (vector (vconcat foldable))
          (i (length vector))
@@ -113,41 +116,55 @@ If a value is found, it is returned as `cats-just', otherwise
     acc))
 
 (cl-defmethod cats-length ((foldable list))
-  "Return the number of elements in the structure."
+  "Return the number of elements in the FOLDABLE structure."
   (length foldable))
 
 (cl-defmethod cats-to-list ((foldable list))
-  "Convert the structure to a list."
+  "Convert the FOLDABLE structure to a list."
   foldable)
 
 
 ;;; Vector
 
 (cl-defmethod cats-fold-map (fn (foldable vector) mempty)
-  "Map each element into a monoid and combine the results with mappend."
+  "Map each element into a monoid and combine the results with mappend.
+
+FN is the mapping function, FOLDABLE is the structure to fold.
+MEMPTY is an instance of the target monoid, this is used to
+resolve the correct mempty method."
   (cats-fold-map fn (append foldable nil) mempty))
 
 (cl-defmethod cats-foldr (fn init (foldable vector))
-  "Right-associative fold of a structure."
+  "Right-associative fold of a structure.
+
+FN is the folding function, INIT is the initial value, and
+FOLDABLE is the structure to fold."
   (cats-foldr fn init (append foldable nil)))
 
 (cl-defmethod cats-length ((foldable vector))
-  "Return the number of elements in the structure."
+  "Return the number of elements in the FOLDABLE structure."
   (length foldable))
 
 (cl-defmethod cats-to-list ((foldable vector))
-  "Convert the structure to a list."
+  "Convert the FOLDABLE structure to a list."
   (append foldable nil))
 
 
 ;;; Maybe
 
 (cl-defmethod cats-fold-map (fn (foldable cats-data-maybe) mempty)
-  "Map each element into a monoid and combine the results with mappend."
+  "Map each element into a monoid and combine the results with mappend.
+
+FN is the mapping function, FOLDABLE is the structure to fold.
+MEMPTY is an instance of the target monoid, this is used to
+resolve the correct mempty method."
   (cats-maybe mempty fn foldable))
 
 (cl-defmethod cats-foldr (fn init (foldable cats-data-maybe))
-  "Right-associative fold of a structure."
+  "Right-associative fold of a structure.
+
+FN is the folding function, INIT is the initial value, and
+FOLDABLE is the structure to fold."
   (if (cats-nothing-p foldable)
       init
     (funcall fn (cats-just-value foldable) init)))

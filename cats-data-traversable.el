@@ -60,6 +60,10 @@ traversibles."
 (cl-defgeneric cats-mapm (fn traversable &optional return)
   "Same as `cats-traverse' but for monadic actions.
 
+FN is a function that takes a value and maps it to a monadic
+effect.  TRAVERSABLE is the traversable structure.  RETURN is an
+instance of the monad class returned by FN.
+
 The default implementation of this method is `cats-traverse' but
 it exists because some monads can have more efficient
 implementation due to monads having more structure than
@@ -70,6 +74,9 @@ applicatives."
 (cl-defgeneric cats-sequence (traversable &optional return)
   "Same as `cats-sequence-a' but for monadic actions.
 
+TRAVERSABLE is the traversable structure.  RETURN is an instance
+of the monad class returned by FN.
+
 The default implementation of this method is `cats-sequence-a'
 but it exists because some monads can have more efficient
 implementation due to monads having more structure than
@@ -79,19 +86,37 @@ applicatives."
 
 ;;; List
 
-(cl-defmethod cats-traverse (fn (lst list) &optional pure)
-  "Traverse a list with a function."
+(cl-defmethod cats-traverse (fn (traversable list) &optional pure)
+  "Traverse a list with a function.
+
+FN is a function that takes a value and maps it to an applicative
+effect.
+
+TRAVERSABLE is the traversable structure.
+
+PURE is an instance of an applicative class returned by fn.  It
+is optional because it is not necessary for non-empty
+traversibles."
   (cats-foldr
    (lambda (it acc)
      (cats-lift-a2 #'cons (funcall fn it) acc))
    (cats-pure pure nil)
-   lst))
+   traversable))
 
 
 ;;; Maybe
 
 (cl-defmethod cats-traverse (fn (traversable cats-data-maybe) &optional pure)
-  "Traverse a maybe with a function."
+  "Traverse a maybe with a function.
+
+FN is a function that takes a value and maps it to an applicative
+effect.
+
+TRAVERSABLE is the traversable structure.
+
+PURE is an instance of an applicative class returned by fn.  It
+is optional because it is not necessary for non-empty
+traversibles."
   (if (cats-nothing-p traversable)
       (cats-pure pure (cats-nothing))
     (cats-fmap

@@ -78,12 +78,16 @@ Applicative functors must obey the following laws:
 ;;; Cons
 
 (cl-defmethod cats-pure ((_ cons) a)
+  "Return A in pure context."
   (list a))
 
 (cl-defmethod cats-apply ((fn cons) (a cons))
-  "The apply implementation for cons uses zipping.
+  "The apply implementation for cons with zipping.
 
-For regular lists the list method is called instead."
+For regular lists the nondeterministic list method is called
+instead.
+
+FN and A are cons functors."
   (let ((last-cons-fn (last fn))
         (last-cons-a (last a))
         (fn-len (safe-length fn))
@@ -106,6 +110,7 @@ For regular lists the list method is called instead."
   ((list :initarg :list)))
 
 (defun cats-ziplist (a)
+  "Return a list A wrapped as ziplist."
   (cats-data-ziplist :list a))
 
 (cl-defmethod cats-pure ((_ cats-data-ziplist) a)

@@ -31,11 +31,13 @@
 (defclass cats-nothing (cats-data-maybe eieio-singleton) ())
 
 (cl-defmethod cl-print-object ((this cats-data-just) stream)
+  "Print the object THIS to STREAM."
   (princ "#<cats-data-just " stream)
   (cl-print-object (oref this value) stream)
   (princ ">" stream))
 
 (cl-defmethod cl-print-object ((_this cats-nothing) stream)
+  "Print the object THIS to STREAM."
   (princ "#<cats-nothing>" stream))
 
 (defun cats-just (x)
