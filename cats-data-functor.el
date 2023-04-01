@@ -24,6 +24,7 @@
 ;;; Code:
 
 (require 'cats-data-maybe)
+(require 'cats-data-ziplist)
 
 
 ;;; Functor class
@@ -74,6 +75,12 @@ fmap implementations must obey the following laws:
   (if (cats-nothing-p a)
       (cats-nothing)
     (cats-just (funcall fn (cats-just-value a)))))
+
+
+;;; Ziplist
+(cl-defmethod cats-fmap (fn (a cats-data-ziplist))
+  "Map FN over A."
+  (cats-ziplist (mapcar fn (oref a list))))
 
 (provide 'cats-data-functor)
 ;;; cats-data-functor.el ends here

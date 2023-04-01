@@ -51,6 +51,7 @@ Instances for built-in Elisp types:
 Instances for types provided by Cats:
 
 - `cats-data-maybe`
+- `cats-data-ziplist`
 - `cats-data-state`
 
 ## Applicative

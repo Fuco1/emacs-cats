@@ -24,6 +24,7 @@
 ;;; Code:
 
 (require 'cats-data-maybe)
+(require 'cats-data-ziplist)
 (require 'cats-data-functor)
 (require 'cats-function-helpers)
 
@@ -105,13 +106,6 @@ FN and A are cons functors."
 
 
 ;;; Ziplist
-
-(defclass cats-data-ziplist ()
-  ((list :initarg :list)))
-
-(defun cats-ziplist (a)
-  "Return a list A wrapped as ziplist."
-  (cats-data-ziplist :list a))
 
 (cl-defmethod cats-pure ((_ cats-data-ziplist) a)
   "Return A in pure context."
