@@ -104,6 +104,32 @@ traversibles."
    traversable))
 
 
+;;; Ziplist
+
+(cl-defmethod cats-traverse (fn (traversable cats-data-ziplist) &optional pure)
+  "Traverse a ziplist with a function.
+
+FN is a function that takes a value and maps it to an applicative
+effect.
+
+TRAVERSABLE is the traversable structure.
+
+PURE is an instance of an applicative class returned by fn.  It
+is optional because it is not necessary for non-empty
+traversibles."
+  (cats-foldr
+   (lambda (it acc)
+     (cats-lift-a2
+      ;; like cons but wrap in a ziplist box
+      (lambda (a b)
+        (cats-ziplist
+         (cons a (oref b list))))
+      (funcall fn it)
+      acc))
+   (cats-pure pure (cats-ziplist nil))
+   traversable))
+
+
 ;;; Maybe
 
 (cl-defmethod cats-traverse (fn (traversable cats-data-maybe) &optional pure)

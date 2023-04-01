@@ -27,6 +27,7 @@
 (eval-and-compile (setq eieio-backward-compatibility nil))
 
 (require 'cats-data-maybe)
+(require 'cats-data-ziplist)
 (require 'cats-data-monoid)
 
 
@@ -122,6 +123,24 @@ FOLDABLE is the structure to fold."
 (cl-defmethod cats-to-list ((foldable list))
   "Convert the FOLDABLE structure to a list."
   foldable)
+
+
+;;; Ziplist
+
+(cl-defmethod cats-foldr (fn init (foldable cats-data-ziplist))
+  "Right-associative fold of a structure.
+
+FN is the folding function, INIT is the initial value, and
+FOLDABLE is the structure to fold."
+  (cats-foldr fn init (oref foldable list)))
+
+(cl-defmethod cats-length ((foldable cats-data-ziplist))
+  "Return the number of elements in the FOLDABLE structure."
+  (length (oref foldable list)))
+
+(cl-defmethod cats-to-list ((foldable cats-data-ziplist))
+  "Convert the FOLDABLE structure to a list."
+  (oref foldable list))
 
 
 ;;; Vector
