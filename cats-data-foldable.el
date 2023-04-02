@@ -45,7 +45,7 @@ resolve the correct mempty method.
 Examples:
 
   (cats-fold-map #'identity (cats-just 1) 0)         ;; => 1
-  (cats-fold-map #'number-to-string (list 1 2 3) "") ;; => \"123\"
+  (cats-fold-map #'number-to-string (list 1 2 3) \"\") ;; => \"123\"
 
 See also `cats-foldr'."
   (cats-foldr
