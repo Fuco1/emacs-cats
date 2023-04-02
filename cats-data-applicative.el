@@ -46,7 +46,7 @@ Examples:
   (cats-pure (cats-nothing) 1) ;; => (cats-just 1)"
   (declare (indent 1)))
 
-;; (cats-apply :: (function ((:F (function (&a) &b)) (:F &a)) (:F &b)))
+;; (cats-apply :: (function ((&f (function (&a) &b)) (&f &a)) (&f &b)))
 (cl-defgeneric cats-apply (a b)
   "Apply effect A on B.
 
@@ -59,7 +59,7 @@ Applicative functors must obey the following laws:
   u <*> pure y = pure ($ y) <*> u              -- Interchange
   pure (.) <*> u <*> v <*> w = u <*> (v <*> w) -- Composition")
 
-;; (cats-lift-a2 :: (function ((function (&a &b) &c) (:T &a) (:T &b)) (:T &c)))
+;; (cats-lift-a2 :: (function ((function (&a &b) &c) (&t &a) (&t &b)) (&t &c)))
 (cl-defgeneric cats-lift-a2 (fn a b)
   "Lift a binary function FN to actions A and B."
   (cats-apply (cats-fmap (cats-partial fn 2) a) b))

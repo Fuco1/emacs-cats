@@ -31,7 +31,7 @@
 
 ;;; Traversable
 
-;; (cats-traverse :: (function ((function (&a) (:F &b)) (:T &a)) (:F (:T &b))))
+;; (cats-traverse :: (function ((function (&a) (&f &b)) (&t &a)) (&f (&t &b))))
 (cl-defgeneric cats-traverse (fn traversable &optional pure)
   "Traverse a traversable structure with a function.
 
@@ -45,7 +45,7 @@ is optional because it is not necessary for non-empty
 traversibles."
   (cats-sequence-a (cats-fmap fn traversable) pure))
 
-;; (cats-sequence-a :: (function ((:T (:F &a))) (:F (:T &a))))
+;; (cats-sequence-a :: (function ((&t (&f &a))) (&f (&t &a))))
 (cl-defgeneric cats-sequence-a (traversable &optional pure)
   "Evaluate each action in TRAVERSABLE from left to right, and collect the results.
 
@@ -56,7 +56,7 @@ is optional because it is not necessary for non-empty
 traversibles."
   (cats-traverse #'identity traversable pure))
 
-;; (cats-mapm :: (function ((function (&a) (:M &b)) (:T &a)) (:M (:T &b))))
+;; (cats-mapm :: (function ((function (&a) (&m &b)) (&t &a)) (&m (&t &b))))
 (cl-defgeneric cats-mapm (fn traversable &optional return)
   "Same as `cats-traverse' but for monadic actions.
 
@@ -70,7 +70,7 @@ implementation due to monads having more structure than
 applicatives."
   (cats-traverse fn traversable return))
 
-;; (cats-sequence :: (function ((:T (:M &a))) (:M (:T &a))))
+;; (cats-sequence :: (function ((&t (&m &a))) (&m (&t &a))))
 (cl-defgeneric cats-sequence (traversable &optional return)
   "Same as `cats-sequence-a' but for monadic actions.
 

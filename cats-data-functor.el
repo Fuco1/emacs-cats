@@ -29,7 +29,7 @@
 
 ;;; Functor class
 
-;; (cats-fmap :: (function ((function (&a) &b) (:F &a)) (:F &b)))
+;; (cats-fmap :: (function ((function (&a) &b) (&f &a)) (&f &b)))
 (cl-defgeneric cats-fmap (fn a)
   "Map FN over A.
 

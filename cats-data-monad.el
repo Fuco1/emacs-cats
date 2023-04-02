@@ -46,7 +46,7 @@ context from the rest."
   (declare (indent 1))
   (cats-pure return a))
 
-;; (cats-bind :: (function ((:M &a) (function (&a) (:M &b))) (:M &b)))
+;; (cats-bind :: (function ((&m &a) (function (&a) (&m &b))) (&m &b)))
 (cl-defgeneric cats-bind (a b)
   "Bind A to B.
 
@@ -57,7 +57,7 @@ This function is the heart of the monadic world.  It is the
 function that allows us to chain monadic computations together."
   (declare (indent 1)))
 
-;; (cats-seq :: (function ((:M &a) (:M &b)) (:M &b)))
+;; (cats-seq :: (function ((&m &a) (&m &b)) (&m &b)))
 (cl-defgeneric cats-seq (a b)
   "Bind A to B.
 
