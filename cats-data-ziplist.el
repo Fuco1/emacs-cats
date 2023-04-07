@@ -23,6 +23,9 @@
 
 ;;; Code:
 
+(require 'eieio)
+(eval-and-compile (setq eieio-backward-compatibility nil))
+
 (defclass cats-data-ziplist ()
   ((list :initarg :list)))
 
