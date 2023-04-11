@@ -13,9 +13,44 @@ inference, we must explicitly pass the pure and return constructors to
 some functions where it is impossible to get from context.  Other than
 this, the usage and interface is the same as the Haskell libraries.
 
-# Methods
+The macro `cats-do` can be used to sequence monadic actions in an
+imperative way.  Here is an example of a state monad:
 
-Implemented methods:
+``` emacs-lisp
+(defclass my-state ()
+  ((config-file
+    :initarg :config-file
+    :accessor get-config-file)
+   (working-dir
+    :initarg :working-dir
+    :accessor get-working-dir)))
+
+(defun my-exec-in-wd (cmd)
+  "Prepare an action running CMD in current state's working directory."
+  (cats-do
+   ;; map get-working-dir over the internal state, save the result in
+   ;; variable `wd'
+   (:= wd (cats-fmap #'get-working-dir (cats-state-get)))
+   ;; the first argument to return is only used to determine the
+   ;; "instance" of return for state, because Elisp cannot determine
+   ;; this automatically during runtime.
+   (cats-return (cats-data-state)
+     (with-temp-buffer
+       (let ((default-directory wd))
+         (shell-command-to-string cmd))))))
+```
+
+More comprehensive examples are in the [examples](./examples)
+directory.
+
+# Classes and Methods
+
+Classes are implemented by defining one or several `cl-defgeneric`
+methods which need to be implemented (we call this an *instance*).
+For example, to make a `list` an instance of class `Functor`, it needs
+to implemment `(cl-defmethod cats-fmap (fn (this list)))` method.
+
+Following is a list of classes and corresponding methods.
 
 ## Functors
 
